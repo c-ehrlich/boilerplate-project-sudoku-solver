@@ -36,12 +36,39 @@ suite("UnitTests", () => {
     );
   });
   test("Logic handles a valid row placement", () => {
-    assert.fail();
+    assert.isTrue(
+      solver.checkRowPlacement(
+        "1................................................................................",
+        0,
+        1,
+        2
+      )
+    );
   });
-  test("Logic handles an invalid row placement", () => {
-    assert.fail();
+  test("Logic handles an invalid row placement (duplicate number)", () => {
+    assert.isFalse(
+      solver.checkRowPlacement(
+        "1................................................................................",
+        0,
+        1,
+        1
+      )
+    );
+  });
+  test("Logic handles an invalid row placement (non empty square)", () => {
+    assert.isFalse(
+      solver.checkRowPlacement(
+        "1................................................................................",
+        0,
+        0,
+        1
+      )
+    );
   });
   test("Logic handles a valid column placement", () => {
+    assert.fail();
+  });
+  test("Logic handles an invalid column placement", () => {
     assert.fail();
   });
   test("Logic handles an invalid column placement", () => {

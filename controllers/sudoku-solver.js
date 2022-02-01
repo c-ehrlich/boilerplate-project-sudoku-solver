@@ -16,8 +16,6 @@ class SudokuSolver {
       this._columns,
       this._regions
     );
-    console.log("hi");
-    console.log(positionsToCheck);
     for (const positionToCheck of positionsToCheck) {
       let items = [];
       for (const item of positionToCheck) {
@@ -29,21 +27,32 @@ class SudokuSolver {
         }
       }
     }
-    
+
     return true;
   }
 
+  /**
+   * checkRowPlacement, checkColPlacement, CheckRegionPlacement
+   * @param {*} puzzleString valid puzzleString
+   * @param {*} row 0-8
+   * @param {*} column 0-8
+   * @param {*} value 1-9
+   * @returns true or false
+   */
   checkRowPlacement(puzzleString, row, column, value) {
-    const rowToCheck =
-      this._rows[this._rows.findIndex((row) => row.indexOf(value) !== -1)];
-    rowToCheck.forEach((item) => {
-      if (puzzleString[item] === value) {
+    if (puzzleString[row * 9 + column] !== '.') { return false };
+
+    const valueAsString = value.toString();
+    for (const index of this._rows[row]) {
+      if (puzzleString[index] === valueAsString) {
         return false;
       }
-    });
+    };
+
     return true;
   }
 
+  // see checkRowPlacement Def
   checkColPlacement(puzzleString, row, column, value) {
     const colToCheck =
       this._columns[
@@ -57,6 +66,7 @@ class SudokuSolver {
     return true;
   }
 
+  // see checkRowPlacement Def
   checkRegionPlacement(puzzleString, row, column, value) {
     const regToCheck =
       this._regions[
