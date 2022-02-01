@@ -66,13 +66,34 @@ suite("UnitTests", () => {
     );
   });
   test("Logic handles a valid column placement", () => {
-    assert.fail();
+    assert.isTrue(
+      solver.checkColPlacement(
+        "1................................................................................",
+        1,
+        0,
+        2
+      )
+    );
   });
-  test("Logic handles an invalid column placement", () => {
-    assert.fail();
+  test("Logic handles an invalid column placement (duplicate number)", () => {
+    assert.isFalse(
+      solver.checkColPlacement(
+        "1................................................................................",
+        1,
+        0,
+        1
+      )
+    );
   });
-  test("Logic handles an invalid column placement", () => {
-    assert.fail();
+  test("Logic handles an invalid column placement (non empty square)", () => {
+    assert.isFalse(
+      solver.checkColPlacement(
+        "1................................................................................",
+        0,
+        0,
+        1
+      )
+    );
   });
   test("Logic handles a valid region (3x3 grid) placement", () => {
     assert.fail();

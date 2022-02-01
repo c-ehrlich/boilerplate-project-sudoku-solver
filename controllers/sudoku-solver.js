@@ -54,15 +54,15 @@ class SudokuSolver {
 
   // see checkRowPlacement Def
   checkColPlacement(puzzleString, row, column, value) {
-    const colToCheck =
-      this._columns[
-        this._columns.findIndex((col) => col.indexOf(value) !== -1)
-      ];
-    colToCheck.forEach((item) => {
-      if (puzzleString[item] === value) {
+    if (puzzleString[row * 9 + column] !== '.') { return false };
+
+    const valueAsString = value.toString();
+    for (const index of this._columns[column]) {
+      if (puzzleString[index] === valueAsString) {
         return false;
       }
-    });
+    };
+
     return true;
   }
 
