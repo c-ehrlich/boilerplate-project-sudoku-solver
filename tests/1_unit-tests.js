@@ -96,10 +96,34 @@ suite("UnitTests", () => {
     );
   });
   test("Logic handles a valid region (3x3 grid) placement", () => {
-    assert.fail();
+    assert.isTrue(
+      solver.checkRegionPlacement(
+        "1................................................................................",
+        1,
+        1,
+        2
+      )
+    );
   });
-  test("Logic handles an invalid region (3x3 grid) placement", () => {
-    assert.fail();
+  test("Logic handles an invalid region (3x3 grid) placement (duplicate number)", () => {
+    assert.isFalse(
+      solver.checkRegionPlacement(
+        "1................................................................................",
+        1,
+        1,
+        1
+      )
+    );
+  });
+  test("Logic handles an invalid region (3x3 grid) placement (non empty square)", () => {
+    assert.isFalse(
+      solver.checkRegionPlacement(
+        "1................................................................................",
+        0,
+        0,
+        1
+      )
+    );
   });
   test("Valid puzzle strings pass the solver", () => {
     assert.fail();

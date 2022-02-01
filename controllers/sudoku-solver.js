@@ -40,43 +40,51 @@ class SudokuSolver {
    * @returns true or false
    */
   checkRowPlacement(puzzleString, row, column, value) {
-    if (puzzleString[row * 9 + column] !== '.') { return false };
+    if (puzzleString[row * 9 + column] !== ".") {
+      return false;
+    }
 
     const valueAsString = value.toString();
     for (const index of this._rows[row]) {
       if (puzzleString[index] === valueAsString) {
         return false;
       }
-    };
+    }
 
     return true;
   }
 
   // see checkRowPlacement Def
   checkColPlacement(puzzleString, row, column, value) {
-    if (puzzleString[row * 9 + column] !== '.') { return false };
+    if (puzzleString[row * 9 + column] !== ".") {
+      return false;
+    }
 
     const valueAsString = value.toString();
     for (const index of this._columns[column]) {
       if (puzzleString[index] === valueAsString) {
         return false;
       }
-    };
+    }
 
     return true;
   }
 
   // see checkRowPlacement Def
   checkRegionPlacement(puzzleString, row, column, value) {
-    const regToCheck =
-      this._regions[
-        this._regions.findIndex((reg) => reg.indexOf(value) !== -1)
-      ];
-    regToCheck.forEach((item) => {
-      if (puzzleString[item] === value) {
+    const region = this.getRegionFromRowAndColumn(row, column);
+
+    if (puzzleString[row * 9 + column] !== ".") {
+      return false;
+    }
+
+    const valueAsString = value.toString();
+    for (const index of this._regions[region]) {
+      if (puzzleString[index] === valueAsString) {
         return false;
       }
-    });
+    }
+
     return true;
   }
 
@@ -126,6 +134,24 @@ class SudokuSolver {
       row: Math.floor(position / 9),
       col: position % 9,
     };
+  }
+
+  getRegionFromRowAndColumn(row, column) {
+    if (row < 0 || column < 0 || row > 8 || column > 8) return -1;
+
+    if (row <= 2) {
+      if (column <= 2) return 0;
+      if (column <= 5) return 1;
+      return 2;
+    } else if (row <= 5) {
+      if (column <= 2) return 3;
+      if (column <= 5) return 4;
+      return 5;
+    } else {
+      if (column < 2) return 6;
+      if (column < 5) return 7;
+      return 8;
+    }
   }
 
   /**
