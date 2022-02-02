@@ -45,6 +45,28 @@ class SudokuSolver {
   }
 
   /**
+   * finds conflicts in placement
+   * returns array with an element for each conflict
+   * 
+   * or false if there are no conflicts
+   */
+  checkConflict(puzzleString, row, column, value) {
+    let conflict = [];
+    if (!this.checkRowPlacement(puzzleString, row, column, value)) {
+      conflict.push("row");
+    }
+    if (!this.checkColPlacement(puzzleString, row, column, value)) {
+      conflict.push("column");
+    }
+    if (!this.checkRegionPlacement(puzzleString, row, column, value)) {
+      conflict.push("region");
+    }
+
+    if (conflict.length === 0) return false;
+    return conflict;
+  }
+
+  /**
    * Checks if a placement is legal
    * 
    */
