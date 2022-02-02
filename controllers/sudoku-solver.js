@@ -1,3 +1,5 @@
+const { setCharAt } = require("../utils.js");
+
 class SudokuSolver {
   validate(puzzleString) {
     // verify the puzzle string has 81 squares
@@ -40,6 +42,7 @@ class SudokuSolver {
    * @returns true or false
    */
   checkRowPlacement(puzzleString, row, column, value) {
+    console.log("in checkRowPlacement");
     if (puzzleString[row * 9 + column] !== ".") {
       return false;
     }
@@ -47,10 +50,15 @@ class SudokuSolver {
     const valueAsString = value.toString();
     for (const index of this._rows[row]) {
       if (puzzleString[index] === valueAsString) {
+        console.log("Row");
+        console.log(`checking row ${row} column ${column}`);
+        console.log(puzzleString);
+        console.log(index, puzzleString[index], valueAsString);
         return false;
       }
     }
 
+    console.log("exit check Row Placement on true");
     return true;
   }
 
@@ -63,6 +71,10 @@ class SudokuSolver {
     const valueAsString = value.toString();
     for (const index of this._columns[column]) {
       if (puzzleString[index] === valueAsString) {
+        console.log("Column");
+        console.log(`checking row ${row} column ${column}`);
+        console.log(puzzleString);
+        console.log(index, puzzleString[index], valueAsString);
         return false;
       }
     }
@@ -81,6 +93,10 @@ class SudokuSolver {
     const valueAsString = value.toString();
     for (const index of this._regions[region]) {
       if (puzzleString[index] === valueAsString) {
+        console.log("Region");
+        console.log(`checking row ${row} column ${column}`);
+        console.log(puzzleString);
+        console.log(index, puzzleString[index], valueAsString);
         return false;
       }
     }
@@ -88,45 +104,46 @@ class SudokuSolver {
     return true;
   }
 
-  solve(puzzleString) {
-    let string = puzzleString;
-    let solved = false;
-    // TODO make sure we're not trying to solve an invalid puzzle
-    // (make sure all rows, columns, and regions are valid initially
-    // if not return some kind of error i guess
-    // maybe also do this before checking row/col/reg placement?
-    // so it should probably be its own method
-    // this maybe also means moving the arrays outside of the functions they're
-    // currently in
-    while (!solved) {
-      if (!string.match(/./)) {
-        solved = true;
-      } // maybe do this everytime after changing something?
+  sleep(milliseconds) {
+    const date = Date.now();
+    let currentDate = null;
+    do {
+      currentDate = Date.now();
+    } while (currentDate - date < milliseconds);
+  }
 
-      for (let i = 0; i < 81; i++) {
-        if (string[i] === ".") {
-          let { row, col } = this.getRowAndColumnFromNumericalPosition(i);
-          let validInputs = [];
-          for (let num = 1; num <= 9; num++) {
-            if (
-              this.checkRowPlacement(string, row, col, num) &&
-              this.checkColPlacement(string, row, col, num) &&
-              this.checkRegionPlacement(string, row, col, num)
-            ) {
-              validInputs.push(num);
-            }
-          }
-          if (validInputs.length === 1) {
-            string[i] = validInputs[0];
+  solve(puzzleString) {
+    if (!this.validate(puzzleString)) return false;
+
+    if (puzzleString.match(/[^\d\.]/)) return puzzleString;
+
+    for (let i = 0; i < puzzleString.length; i++) {
+      if (puzzleString[i] === ".") {
+        const coords = this.getRowAndColumnFromNumericalPosition(i);
+        for (let num = 1; num <= 9; num++) {
+          if (
+            this.checkRowPlacement(puzzleString, coords.row, coords.col, num) &&
+            this.checkColPlacement(puzzleString, coords.row, coords.col, num) &&
+            this.checkRegionPlacement(puzzleString, coords.row, coords.col, num)
+          ) {
+            puzzleString = setCharAt(puzzleString, i, num);
+            // console.log(" ");
+            // console.log("769235418851496372432178956174569283395842761628713549283657194516924837947381625");
+            // console.log(puzzleString);
+            // this.sleep(100);
+            this.solve(puzzleString);
+            puzzleString = setCharAt(puzzleString, i, ".");
           }
         }
+        return puzzleString;
       }
     }
-    return string;
+
+    console.log("shouldn't get here");
   }
 
   /**
-   * returns the row (0-9) and column(0-9) based on a numerical position (0-80)
+   * returns the row (0-8) and column(0-8) based on a numerical position (0-80)
    * assumes input is a valid number between 0 and 80
    */
   getRowAndColumnFromNumericalPosition(position) {
@@ -215,5 +232,13 @@ class SudokuSolver {
     [60, 61, 62, 69, 70, 71, 78, 79, 80],
   ];
 }
+
+String.prototype.replaceAt = function (index, replacement) {
+  return (
+    this.substr(0, index) +
+    replacement +
+    this.substr(index + replacement.length)
+  );
+};
 
 module.exports = SudokuSolver;
