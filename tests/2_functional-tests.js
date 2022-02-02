@@ -7,98 +7,95 @@ chai.use(chaiHttp);
 
 suite("Functional Tests", () => {
   suite("/api/solve", () => {
-  //   test("Solve a puzzle with valid puzzle string: POST request to /api/solve", () => {
-  //     chai
-  //       .request(server)
-  //       .post("/api/solve")
-  //       .type("form")
-  //       .send({
-  //         puzzle:
-  //           "..9..5.1.85.4....2432......1...69.83.9.....6.62.71...9......1945....4.37.4.3..6..",
-  //       })
-  //       .end((err, res) => {
-  //         assert.fail();
-  //         assert.equal(res.status, 200);
-  //         console.log("hello");
-  //         console.log(res.body);
-  //         assert.exists(res.body.solution);
-  //         assert.deepEqual(res.body, {
-  //           solution:
-  //             "769235418851496372432178956174569283395842761628713549283657194516924837947381625",
-  //         });
-  //       });
-  //   });
+    test("Solve a puzzle with valid puzzle string: POST request to /api/solve", () => {
+      chai
+        .request(server)
+        .post("/api/solve")
+        .type("form")
+        .send({
+          puzzle:
+            "..9..5.1.85.4....2432......1...69.83.9.....6.62.71...9......1945....4.37.4.3..6..",
+        })
+        .end((err, res) => {
+          assert.equal(res.status, 200);
+          assert.exists(res.body.solution);
+          assert.deepEqual(res.body, {
+            solution:
+              "769235418851496372432178956174569283395842761628713549283657194516924837947381625",
+          });
+        });
+    });
 
-  //   test("Solve a puzzle with missing puzzle string: POST request to /api/solve", () => {
-  //     chai
-  //       .request(server)
-  //       .post("/api/solve")
-  //       .type("form")
-  //       .send({})
-  //       .end((err, res) => {
-  //         assert.equal(res.status, 200);
-  //         assert.exists(res.body);
-  //         assert.deepEqual(res.body, {
-  //           error: "Required field missing",
-  //         });
-  //       });
-  //   });
+    test("Solve a puzzle with missing puzzle string: POST request to /api/solve", () => {
+      chai
+        .request(server)
+        .post("/api/solve")
+        .type("form")
+        .send({})
+        .end((err, res) => {
+          assert.equal(res.status, 200);
+          assert.exists(res.body);
+          assert.deepEqual(res.body, {
+            error: "Required field missing",
+          });
+        });
+    });
 
-  //   test("Solve a puzzle with invalid characters: POST request to /api/solve", () => {
-  //     chai
-  //       .request(server)
-  //       .post("/api/solve")
-  //       .type("form")
-  //       .send({
-  //         puzzle:
-  //           "a................................................................................",
-  //       })
-  //       .end((err, res) => {
-  //         assert.equal(res.status, 200);
-  //         assert.deepEqual(res.body, {
-  //           error: "Invalid characters in puzzle",
-  //         });
-  //       });
-  //   });
+    test("Solve a puzzle with invalid characters: POST request to /api/solve", () => {
+      chai
+        .request(server)
+        .post("/api/solve")
+        .type("form")
+        .send({
+          puzzle:
+            "a................................................................................",
+        })
+        .end((err, res) => {
+          assert.equal(res.status, 200);
+          assert.deepEqual(res.body, {
+            error: "Invalid characters in puzzle",
+          });
+        });
+    });
 
-  //   test("Solve a puzzle with incorrect length: POST request to /api/solve", () => {
-  //     chai
-  //       .request(server)
-  //       .post("/api/solve")
-  //       .type("form")
-  //       .send({
-  //         puzzle:
-  //           "1...............................................................................",
-  //       })
-  //       .end((err, res) => {
-  //         assert.equal(res.status, 200);
-  //         assert.deepEqual(
-  //           res.body,
-  //           {
-  //             error: "Expected puzzle to be 81 characters long",
-  //           },
-  //           "Should react correctly to a 80 character length puzzle"
-  //         );
-  //       });
-  //     chai
-  //       .request(server)
-  //       .post("/api/solve")
-  //       .type("form")
-  //       .send({
-  //         puzzle:
-  //           "1.................................................................................",
-  //       })
-  //       .end((err, res) => {
-  //         assert.equal(res.status, 200);
-  //         assert.deepEqual(
-  //           res.body,
-  //           {
-  //             error: "Expected puzzle to be 81 characters long",
-  //           },
-  //           "Should react correctly to a 82 character length puzzle"
-  //         );
-  //       });
-  //   });
+    test("Solve a puzzle with incorrect length: POST request to /api/solve", () => {
+      chai
+        .request(server)
+        .post("/api/solve")
+        .type("form")
+        .send({
+          puzzle:
+            "1...............................................................................",
+        })
+        .end((err, res) => {
+          assert.equal(res.status, 200);
+          assert.deepEqual(
+            res.body,
+            {
+              error: "Expected puzzle to be 81 characters long",
+            },
+            "Should react correctly to a 80 character length puzzle"
+          );
+        });
+      chai
+        .request(server)
+        .post("/api/solve")
+        .type("form")
+        .send({
+          puzzle:
+            "1.................................................................................",
+        })
+        .end((err, res) => {
+          assert.equal(res.status, 200);
+          assert.deepEqual(
+            res.body,
+            {
+              error: "Expected puzzle to be 81 characters long",
+            },
+            "Should react correctly to a 82 character length puzzle"
+          );
+        });
+    });
 
     test("Solve a puzzle that cannot be solved: POST request to /api/solve", () => {
       chai
@@ -110,7 +107,6 @@ suite("Functional Tests", () => {
             "11...............................................................................",
         })
         .end((err, res) => {
-          console.log(res);
           assert.equal(res.status, 200);
           assert.exists(res.body.error);
           assert.deepEqual(res.body, {
