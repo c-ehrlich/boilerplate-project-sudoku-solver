@@ -64,6 +64,10 @@ module.exports = function (app) {
 
     const solution = solver.solve(puzzle);
 
+    if (!solution) {
+      return res.json({ error: "Bug in the solver. This should not happen."})
+    }
+
     return res.json({ solution: solution });
   });
 };
