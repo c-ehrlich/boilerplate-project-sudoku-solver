@@ -12,9 +12,33 @@ module.exports = function (app) {
      * puzzle: "..9..5.1.85.4....2432......1...69.83.9.....6.62.71...9......1945....4.37.4.3..6.."
      * value: "1"
      */
+    
+    if (!req.body.puzzle || !req.body.coordinate || !req.body.value) {
+      return res.json({ error: "Required field(s) missing" });
+    }
+
+    const coords = solver.getRowAndColumnFromStringPosition(req.body.coordinate);
+    if (!coords) return res.json({ error: "Invalid coordinate" });
+
+    if (!solver.validateLength(req.body.puzzle)) {
+      return res.json({ error: "Expected puzzle to be 81 characters long" });
+    }
+
+    if (!solver.validateCharacters(req.body.puzzle)) {
+      return res.json({ error: "Invalid characters in puzzle" });
+    }
+
+    if (!solver.validateBoardLegality(req.body.puzzle)) {
+      return res.json({ error: "Puzzle cannot be solved" });
+    }
+
+    if (req.body.value > 9 || req.body.value < 1) {
+      return res.json({ error: "Invalid value" });
+    }
   });
 
   app.route("/api/solve").post((req, res) => {
+    return res.json({ test: "test" });
     /**
      * SAMPLE REQUEST PAYLOAD
      * puzzle: "..9..5.1.85.4....2432......1...69.83.9.....6.62.71...9......1945....4.37.4.3..6.."

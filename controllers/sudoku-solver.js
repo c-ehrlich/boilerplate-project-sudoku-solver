@@ -3,16 +3,28 @@ const { setCharAt } = require("../utils.js");
 class SudokuSolver {
   validate(puzzleString) {
     // verify the puzzle string has 81 squares
-    if (puzzleString.length !== 81) {
-      return false;
-    }
+    if (!this.validateLength(puzzleString)) return false;
 
     // verify the puzzle string only contains numbers and '.'
-    if (puzzleString.match(/[^\d\.]/)) {
-      return false;
-    }
+    if (!this.validateCharacters(puzzleString)) return false;
 
     // verify the board is not in an illegal state
+    if (!this.validateBoardLegality(puzzleString)) return false;
+
+    return true;
+  }
+
+  validateLength(puzzleString) {
+    if (puzzleString.length !== 81) return false;
+    return true;
+  }
+
+  validateCharacters(puzzleString) {
+    if (puzzleString.match(/[^\d\.]/)) return false;
+    return true;
+  }
+
+  validateBoardLegality(puzzleString) {
     const positionsToCheck = [].concat(
       this._rows,
       this._columns,
@@ -29,17 +41,12 @@ class SudokuSolver {
         }
       }
     }
-
     return true;
   }
 
   /**
-   * checkRowPlacement, checkColPlacement, CheckRegionPlacement
-   * @param {*} puzzleString valid puzzleString
-   * @param {*} row 0-8
-   * @param {*} column 0-8
-   * @param {*} value 1-9
-   * @returns true or false
+   * Checks if a placement is legal
+   * 
    */
   checkRowPlacement(puzzleString, row, column, value) {
     if (puzzleString[row * 9 + column] !== ".") {
@@ -56,7 +63,7 @@ class SudokuSolver {
     return true;
   }
 
-  // see checkRowPlacement Def
+  // see checkRowPlacement docstring
   checkColPlacement(puzzleString, row, column, value) {
     if (puzzleString[row * 9 + column] !== ".") {
       return false;
@@ -90,20 +97,21 @@ class SudokuSolver {
     return true;
   }
 
-  sleep(milliseconds) {
-    const date = Date.now();
-    let currentDate = null;
-    do {
-      currentDate = Date.now();
-    } while (currentDate - date < milliseconds);
-  }
-
+  /**
+   * Checks if the puzzle is a valid, solveable Sudoku puzzle
+   * If so, start solving it recursively 
+   */
   solve(puzzleString) {
     if (!this.validate(puzzleString)) return false;
 
     return this.recursiveSolve(puzzleString);
   }
 
+  /**
+   * Recursively solve a valid Sudoku puzzle
+   * based on this python solution https://www.youtube.com/watch?v=G_UYXzGuqvM 
+   * assumes input has already been sanitized
+   */
   recursiveSolve(puzzleString) {
     for (let i = 0; i < puzzleString.length; i++) {
       if (puzzleString[i] === ".") {
@@ -127,6 +135,7 @@ class SudokuSolver {
     }
     return puzzleString;
   }
+
   /**
    * returns the row (0-8) and column(0-8) based on a numerical position (0-80)
    * assumes input is a valid number between 0 and 80
@@ -138,6 +147,14 @@ class SudokuSolver {
     };
   }
 
+  /**
+   * A sudoku puzzle is split into 9 regions such as:
+   *   1 2 3
+   *   4 5 6
+   *   7 8 9
+   * Takes a row (0-8) and column (0-8) and returns the region
+   * or -1 if the input is invalid
+   */
   getRegionFromRowAndColumn(row, column) {
     if (row < 0 || column < 0 || row > 8 || column > 8) return -1;
 
@@ -171,7 +188,7 @@ class SudokuSolver {
       return undefined;
     }
     // check column is valid
-    if (!position[1].match(/1-9/)) {
+    if (!position[1].match(/[1-9]/)) {
       return undefined;
     }
 
@@ -181,6 +198,13 @@ class SudokuSolver {
     };
   }
 
+  /**
+   * Row, Column, Region hardcoded arrays
+   * Because our input is a string, we need to know which indices to check
+   * 
+   * The server creates only a single SudokuSolver, so this is much faster than
+   * converting the Sudoku to a nested array on every request. Not so elegant, but fast. 
+   */
   _rows = [
     [0, 1, 2, 3, 4, 5, 6, 7, 8],
     [9, 10, 11, 12, 13, 14, 15, 16, 17],
@@ -192,7 +216,6 @@ class SudokuSolver {
     [63, 64, 65, 66, 67, 68, 69, 70, 71],
     [72, 73, 74, 75, 76, 77, 78, 79, 80],
   ];
-
   _columns = [
     [0, 9, 18, 27, 36, 45, 54, 63, 72],
     [1, 10, 19, 28, 37, 46, 55, 64, 73],
@@ -204,7 +227,6 @@ class SudokuSolver {
     [7, 16, 25, 34, 43, 52, 61, 70, 79],
     [8, 17, 26, 35, 44, 53, 62, 71, 80],
   ];
-
   _regions = [
     [0, 1, 2, 9, 10, 11, 18, 19, 20],
     [3, 4, 5, 12, 13, 14, 21, 22, 23],
