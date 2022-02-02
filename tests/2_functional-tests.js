@@ -277,8 +277,33 @@ suite("Functional Tests", () => {
         });
     });
 
+    test("Check a puzzle placement with incorrect length: POST request to /api/check", () => {
+      const incorrectLengthPuzzles = [
+        "................................................................................",
+        "..................................................................................",
+      ]
+
+      incorrectLengthPuzzles.forEach(puzzle => {
+        chai
+        .request(server)
+        .post("/api/check")
+        .type("form")
+        .send({
+          puzzle: puzzle,
+          coordinate: "A1",
+          value: 1,
+        })
+        .end((err, res) => {
+          assert.equal(res.status, 200);
+          assert.deepEqual(res.body, {
+            error: "Expected puzzle to be 81 characters long",
+          });
+        });
+    });
+      })
+      
+
     test("Check a puzzle placement with invalid placement coordinate: POST request to /api/check", () => {
-      // Check A0
       chai
         .request(server)
         .post("/api/check")
