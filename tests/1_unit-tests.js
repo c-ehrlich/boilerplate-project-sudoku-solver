@@ -107,8 +107,13 @@ suite("UnitTests", () => {
   });
   test("Region calculation isn't x-y flipped", () => {
     assert.isTrue(
-      solver.checkRegionPlacement("76923541885149637243217895617456928339584276162871354928....1945....4.37.4.3..6..",7,4,2)
-    )
+      solver.checkRegionPlacement(
+        "76923541885149637243217895617456928339584276162871354928....1945....4.37.4.3..6..",
+        7,
+        4,
+        2
+      )
+    );
   });
   test("Region calculation works for more complex input", () => {
     assert.isTrue(
@@ -117,9 +122,10 @@ suite("UnitTests", () => {
         6,
         2,
         3
-      ), "Region"
+      ),
+      "Region"
     );
-  })
+  });
   test("Logic handles an invalid region (3x3 grid) placement (duplicate number)", () => {
     assert.isFalse(
       solver.checkRegionPlacement(
@@ -140,46 +146,18 @@ suite("UnitTests", () => {
       )
     );
   });
-  // test("Valid puzzle strings pass the solver", () => {
-  //   assert.isString(
-  //     solver.solve(
-  //       "..9..5.1.85.4....2432......1...69.83.9.....6.62.71...9......1945....4.37.4.3..6.."
-  //     )
-  //   );
-  // });
+  test("Valid puzzle strings pass the solver", () => {
+    assert.equal(
+      solver.solve(
+        "..9..5.1.85.4....2432......1...69.83.9.....6.62.71...9......1945....4.37.4.3..6.."
+      ),
+      "769235418851496372432178956174569283395842761628713549283657194516924837947381625"
+    ), "Solver should solve correctly";
+  });
   test("Invalid puzzle strings fail the solver", () => {
     assert.fail();
   });
   test("Solver returns the expected solution for an incomplete puzzle", () => {
     assert.fail();
-  });
-
-  test("temp test to debug solver", () => {
-    console.log("in temp test");
-    assert.isTrue(
-      solver.checkRowPlacement(
-        "76923541885149637243217895617456928339584276162871354928....1945....4.37.4.3..6..",
-        6,
-        2,
-        3
-      ), "Row"
-    );
-    console.log("in temp test 2");
-    assert.isTrue(
-      solver.checkColPlacement(
-        "76923541885149637243217895617456928339584276162871354928....1945....4.37.4.3..6..",
-        6,
-        2,
-        3
-      ), "Col"
-    );
-    assert.isTrue(
-      solver.checkRegionPlacement(
-        "76923541885149637243217895617456928339584276162871354928....1945....4.37.4.3..6..",
-        6,
-        2,
-        3
-      ), "Region"
-    );
   });
 });

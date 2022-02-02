@@ -42,7 +42,6 @@ class SudokuSolver {
    * @returns true or false
    */
   checkRowPlacement(puzzleString, row, column, value) {
-    console.log("in checkRowPlacement");
     if (puzzleString[row * 9 + column] !== ".") {
       return false;
     }
@@ -50,15 +49,10 @@ class SudokuSolver {
     const valueAsString = value.toString();
     for (const index of this._rows[row]) {
       if (puzzleString[index] === valueAsString) {
-        console.log("Row");
-        console.log(`checking row ${row} column ${column}`);
-        console.log(puzzleString);
-        console.log(index, puzzleString[index], valueAsString);
         return false;
       }
     }
 
-    console.log("exit check Row Placement on true");
     return true;
   }
 
@@ -71,10 +65,6 @@ class SudokuSolver {
     const valueAsString = value.toString();
     for (const index of this._columns[column]) {
       if (puzzleString[index] === valueAsString) {
-        console.log("Column");
-        console.log(`checking row ${row} column ${column}`);
-        console.log(puzzleString);
-        console.log(index, puzzleString[index], valueAsString);
         return false;
       }
     }
@@ -93,10 +83,6 @@ class SudokuSolver {
     const valueAsString = value.toString();
     for (const index of this._regions[region]) {
       if (puzzleString[index] === valueAsString) {
-        console.log("Region");
-        console.log(`checking row ${row} column ${column}`);
-        console.log(puzzleString);
-        console.log(index, puzzleString[index], valueAsString);
         return false;
       }
     }
@@ -115,8 +101,10 @@ class SudokuSolver {
   solve(puzzleString) {
     if (!this.validate(puzzleString)) return false;
 
-    if (puzzleString.match(/[^\d\.]/)) return puzzleString;
+    return this.recursiveSolve(puzzleString);
+  }
 
+  recursiveSolve(puzzleString) {
     for (let i = 0; i < puzzleString.length; i++) {
       if (puzzleString[i] === ".") {
         const coords = this.getRowAndColumnFromNumericalPosition(i);
@@ -127,21 +115,18 @@ class SudokuSolver {
             this.checkRegionPlacement(puzzleString, coords.row, coords.col, num)
           ) {
             puzzleString = setCharAt(puzzleString, i, num);
-            // console.log(" ");
-            // console.log("769235418851496372432178956174569283395842761628713549283657194516924837947381625");
-            // console.log(puzzleString);
-            // this.sleep(100);
-            this.solve(puzzleString);
-            puzzleString = setCharAt(puzzleString, i, ".");
+            puzzleString = this.recursiveSolve(puzzleString);
+            if (puzzleString.match(/[.]/)) {
+              puzzleString = setCharAt(puzzleString, i, ".");
+            } else {
+            }
           }
         }
         return puzzleString;
       }
     }
-
-    console.log("shouldn't get here");
+    return puzzleString;
   }
-
   /**
    * returns the row (0-8) and column(0-8) based on a numerical position (0-80)
    * assumes input is a valid number between 0 and 80
@@ -165,8 +150,8 @@ class SudokuSolver {
       if (column <= 5) return 4;
       return 5;
     } else {
-      if (column < 2) return 6;
-      if (column < 5) return 7;
+      if (column <= 2) return 6;
+      if (column <= 5) return 7;
       return 8;
     }
   }
