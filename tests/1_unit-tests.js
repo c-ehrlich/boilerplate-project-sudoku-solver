@@ -151,11 +151,17 @@ suite("UnitTests", () => {
       solver.solve(
         "..9..5.1.85.4....2432......1...69.83.9.....6.62.71...9......1945....4.37.4.3..6.."
       ),
-      "769235418851496372432178956174569283395842761628713549283657194516924837947381625"
-    ), "Solver should solve correctly";
+      "769235418851496372432178956174569283395842761628713549283657194516924837947381625",
+      "Solver should solve correctly"
+    );
   });
   test("Invalid puzzle strings fail the solver", () => {
-    assert.fail();
+    assert.isFalse(
+      solver.solve(
+        "11..............................................................................."
+      ),
+      "Solver should know when a puzzle is unsolveable"
+    );
   });
   test("Solver returns the expected solution for an incomplete puzzle", () => {
     assert.fail();
