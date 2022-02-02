@@ -197,65 +197,40 @@ suite("Functional Tests", () => {
     });
 
     test("Check a puzzle placement with missing required fields: POST request to /api/check", () => {
-      // missing puzzle
-      chai
-        .request(server)
-        .post("/api/check")
-        .type("form")
-        .send({
-          coordinate: "A1",
-          value: 1,
-        })
-        .end((err, res) => {
-          assert.equal(res.status, 200);
-          assert.deepEqual(res.body, {
-            error: "Required field(s) missing",
-          });
-        });
-      // missing coordinate
-      chai
-        .request(server)
-        .post("/api/check")
-        .type("form")
-        .send({
+      const badPayloads = [
+        { coordinate: "A1", value: 1 }, // missing puzzle
+        {
           puzzle:
             ".................................................................................",
           value: 1,
-        })
-        .end((err, res) => {
-          assert.equal(res.status, 200);
-          assert.deepEqual(res.body, {
-            error: "Required field(s) missing",
-          });
-        });
-      // missing value
-      chai
-        .request(server)
-        .post("/api/check")
-        .type("form")
-        .send({
+        }, // missing coordinate
+        {
           puzzle:
             ".................................................................................",
           coordinate: "A1",
-        })
-        .end((err, res) => {
-          assert.equal(res.status, 200);
-          assert.deepEqual(res.body, {
-            error: "Required field(s) missing",
+        }, // missing value
+        {
+          puzzle:
+            ".................................................................................",
+        }, // missing value and coordinate
+        { value: 1 }, // missing puzzle and coordinate
+        { coordinate: "A1" }, // missing puzzle and value
+        {}, // missing puzzle, coordinate, and value
+      ];
+
+      badPayloads.forEach((payload) => {
+        chai
+          .request(server)
+          .post("/api/check")
+          .type("form")
+          .send(payload)
+          .end((err, res) => {
+            assert.equal(res.status, 200);
+            assert.deepEqual(res.body, {
+              error: "Required field(s) missing",
+            });
           });
-        });
-      // missing puzzle, coordinate, and value
-      chai
-        .request(server)
-        .post("/api/check")
-        .type("form")
-        .send({})
-        .end((err, res) => {
-          assert.equal(res.status, 200);
-          assert.deepEqual(res.body, {
-            error: "Required field(s) missing",
-          });
-        });
+      });
     });
 
     test("Check a puzzle placement with invalid characters: POST request to /api/check", () => {
@@ -281,150 +256,75 @@ suite("Functional Tests", () => {
       const incorrectLengthPuzzles = [
         "................................................................................",
         "..................................................................................",
-      ]
+      ];
 
-      incorrectLengthPuzzles.forEach(puzzle => {
+      incorrectLengthPuzzles.forEach((puzzle) => {
         chai
-        .request(server)
-        .post("/api/check")
-        .type("form")
-        .send({
-          puzzle: puzzle,
-          coordinate: "A1",
-          value: 1,
-        })
-        .end((err, res) => {
-          assert.equal(res.status, 200);
-          assert.deepEqual(res.body, {
-            error: "Expected puzzle to be 81 characters long",
+          .request(server)
+          .post("/api/check")
+          .type("form")
+          .send({
+            puzzle: puzzle,
+            coordinate: "A1",
+            value: 1,
+          })
+          .end((err, res) => {
+            assert.equal(res.status, 200);
+            assert.deepEqual(res.body, {
+              error: "Expected puzzle to be 81 characters long",
+            });
           });
-        });
+      });
     });
-      })
-      
 
     test("Check a puzzle placement with invalid placement coordinate: POST request to /api/check", () => {
-      chai
-        .request(server)
-        .post("/api/check")
-        .type("form")
-        .send({
-          puzzle:
-            ".................................................................................",
-          coordinate: "A0",
-          value: 1,
-        })
-        .end((err, res) => {
-          assert.equal(res.status, 200);
-          assert.deepEqual(res.body, {
-            error: "Invalid coordinate",
+      const badPlacementCoordinates = ["A0", "J1", "A", "A10"];
+
+      badPlacementCoordinates.forEach((coordinate) => {
+        chai
+          .request(server)
+          .post("/api/check")
+          .type("form")
+          .send({
+            puzzle:
+              ".................................................................................",
+            coordinate: coordinate,
+            value: 1,
+          })
+          .end((err, res) => {
+            assert.equal(res.status, 200);
+            assert.deepEqual(res.body, {
+              error: "Invalid coordinate",
+            });
           });
-        });
-      // Check J1
-      chai
-        .request(server)
-        .post("/api/check")
-        .type("form")
-        .send({
-          puzzle:
-            ".................................................................................",
-          coordinate: "J1",
-          value: 1,
-        })
-        .end((err, res) => {
-          assert.equal(res.status, 200);
-          assert.deepEqual(res.body, {
-            error: "Invalid coordinate",
-          });
-        });
-      // Check A
-      chai
-        .request(server)
-        .post("/api/check")
-        .type("form")
-        .send({
-          puzzle:
-            ".................................................................................",
-          coordinate: "A",
-          value: 1,
-        })
-        .end((err, res) => {
-          assert.equal(res.status, 200);
-          assert.deepEqual(res.body, {
-            error: "Invalid coordinate",
-          });
-        });
-      // Check A10
-      chai
-        .request(server)
-        .post("/api/check")
-        .type("form")
-        .send({
-          puzzle:
-            ".................................................................................",
-          coordinate: "A10",
-          value: 1,
-        })
-        .end((err, res) => {
-          assert.equal(res.status, 200);
-          assert.deepEqual(res.body, {
-            error: "Invalid coordinate",
-          });
-        });
+      });
     });
 
     test("Check a puzzle placement with invalid placement value: POST request to /api/check", () => {
-      // Check 0
-      chai
-        .request(server)
-        .post("/api/check")
-        .type("form")
-        .send({
-          puzzle:
-            ".................................................................................",
-          coordinate: "A1",
-          value: 0,
-        })
-        .end((err, res) => {
-          assert.equal(res.status, 200);
-          assert.deepEqual(res.body, {
-            error: "Invalid value",
-          }, "Value of 0 should be refused");
-        });
-      // Check 10
-      chai
-        .request(server)
-        .post("/api/check")
-        .type("form")
-        .send({
-          puzzle:
-            ".................................................................................",
-          coordinate: "A1",
-          value: 10,
-        })
-        .end((err, res) => {
-          assert.equal(res.status, 200);
-          assert.deepEqual(res.body, {
-            error: "Invalid value",
-          }, "Value of 10 should be refused");
-        });
-      // Check A
-      chai
-        .request(server)
-        .post("/api/check")
-        .type("form")
-        .send({
-          puzzle:
-            ".................................................................................",
-          coordinate: "A1",
-          value: "A",
-        })
-        .end((err, res) => {
-          assert.equal(res.status, 200);
-          assert.deepEqual(res.body, {
-            error: "Invalid value",
-          }, "Value of A should be refused");
-        });
+      const badPlacementValues = [0, 10, "A"];
+
+      badPlacementValues.forEach((value) => {
+        chai
+          .request(server)
+          .post("/api/check")
+          .type("form")
+          .send({
+            puzzle:
+              ".................................................................................",
+            coordinate: "A1",
+            value: value,
+          })
+          .end((err, res) => {
+            assert.equal(res.status, 200);
+            assert.deepEqual(
+              res.body,
+              {
+                error: "Invalid value",
+              },
+              "Value of 0 should be refused"
+            );
+          });
+      });
     });
   });
 });
