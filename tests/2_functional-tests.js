@@ -364,7 +364,7 @@ suite("Functional Tests", () => {
           assert.equal(res.status, 200);
           assert.deepEqual(res.body, {
             error: "Invalid value",
-          });
+          }, "Value of 0 should be refused");
         });
       // Check 10
       chai
@@ -381,7 +381,7 @@ suite("Functional Tests", () => {
           assert.equal(res.status, 200);
           assert.deepEqual(res.body, {
             error: "Invalid value",
-          });
+          }, "Value of 10 should be refused");
         });
       // Check A
       chai
@@ -398,7 +398,7 @@ suite("Functional Tests", () => {
           assert.equal(res.status, 200);
           assert.deepEqual(res.body, {
             error: "Invalid value",
-          });
+          }, "Value of A should be refused");
         });
     });
   });

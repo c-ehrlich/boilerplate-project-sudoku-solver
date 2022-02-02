@@ -12,7 +12,6 @@ module.exports = function (app) {
      * puzzle: "..9..5.1.85.4....2432......1...69.83.9.....6.62.71...9......1945....4.37.4.3..6.."
      * value: "1"
      */
-    console.log("got a request to /api/check");
 
     if (!req.body.puzzle || !req.body.coordinate || !req.body.value) {
       return res.json({ error: "Required field(s) missing" });
@@ -35,7 +34,11 @@ module.exports = function (app) {
       return res.json({ error: "Puzzle cannot be solved" });
     }
 
-    if (req.body.value > 9 || req.body.value < 1) {
+    if (
+      !Number.isInteger(Number(req.body.value)) ||
+      req.body.value > 9 ||
+      req.body.value < 1
+    ) {
       return res.json({ error: "Invalid value" });
     }
 
@@ -49,7 +52,7 @@ module.exports = function (app) {
     if (conflict) {
       return res.json({ valid: false, conflict: conflict });
     }
-    
+
     return res.json({ valid: true });
   });
 
